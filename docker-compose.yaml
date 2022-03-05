@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+
+  postgres_db:
+    image: postgres:13
+    restart: always
+    volumes:
+      - postgre_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=beauty_db
+      - POSTGRES_USER=beauty
+      - POSTGRES_PASSWORD=beauty
+
+  web:
+    container_name: db_beauty
+    build: .
+    restart: always
+    tty: true
+    volumes:
+      - .:/app
+    depends_on:
+      - postgres_db
+    command: sh -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8002"
+    ports:
+      - "8002:8002"
+
+volumes:
+  postgre_data:
